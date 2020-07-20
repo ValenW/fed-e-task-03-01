@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My vue</title>
 </head>
+
 <body>
   <div id="app">
     <h1>插值表达式</h1>
@@ -13,10 +15,21 @@
 
     <h1>v-text</h1>
     <div v-text="msg"></div>
-    
+
     <h1>v-model</h1>
-    <input type="text" v-model="msg">
-    <input type="text" v-model="count">
+    <label>msg</label><input type="text" v-model="msg"><br />
+    <label>count</label><input type="text" v-model="count"><br />
+    <label>html</label><input type="text" v-model="html"><br />
+    <label>event</label><input type="text" v-model="event"><br />
+
+    <h1>v-html</h1>
+    <div v-html="html"></div>
+
+    <h1>v-on</h1>
+    <button v-on:click="eventHandler">click me to trigger on fixed event click</button> <br />
+    <button @click="eventHandler">click me to trigger at fixed event click</button> <br />
+    <button v-on:[event]="eventHandler">click me to trigger on dynamic event {{ event }}</button> <br />
+    <button @[event]="eventHandler">click me to trigger at dynamic event {{ event }}</button> <br />
   </div>
 
   <script src="./js/dependency.js"></script>
@@ -29,11 +42,22 @@
       el: '#app',
       data: {
         msg: 'hello vue',
+        event: 'click',
+        html: '<a href="#"> this is a link </a>',
         count: 0,
-        person: { name: 'vue' }
+        person: {
+          name: 'vue'
+        }
+      },
+      methods: {
+        eventHandler: e => {
+          console.log(e)
+          alert(e.type)
+        }
       }
     })
     // app.$data.person = { name: 'hello' }
   </script>
 </body>
+
 </html>

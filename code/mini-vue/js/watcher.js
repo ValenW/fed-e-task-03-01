@@ -18,6 +18,7 @@ class Watcher {
       return
     }
 
-    this.updater(newValue)
+    this.updater(newValue, this.oldValue)
+    this.oldValue = newValue
   }
 }

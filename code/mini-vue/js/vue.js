@@ -3,10 +3,12 @@ class Vue {
     // 1. 保存选项到属性上
     this.$options = options || {}
     this.$data = this.$options.data || {}
+    this.$methods = this.$options.methods || {}
     this.$el = typeof this.$options.el === 'string' ? document.querySelector(this.$options.el) : this.$options.el
 
     // 2. 将data转换为vue上的getter/setter
     this._proxyData(this.$data)
+    this._proxyData(this.$methods)
 
     // 3. 调用Observer监听数据变化
     new Observer(this.$data)

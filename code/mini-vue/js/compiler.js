@@ -29,12 +29,16 @@ class Compiler {
       if (this.isDirective(attr.name)) {
         const attrName = attr.name.substr(2)
         this.update(node, attr.value, attrName)
+      } else if (this.isAt(attr.name)) {
+        const attrName = `on:${attr.name.substr(1)}`
+        this.update(node, attr.value, attrName)
       }
     })
   }
-  update(node, key, attrName) {
+  update(node, key, attrNameStr) {
+    const [attrName, attrSuffix] = attrNameStr.split(':')
     const updater = this[attrName + 'Updater']
-    updater && updater.call(this, node, this.vm[key], key)
+    updater && updater.call(this, node, this.vm[key], key, attrSuffix)
   }
   textUpdater(node, value, key) {
     node.textContent = value
@@ -47,7 +51,20 @@ class Compiler {
     node.addEventListener('input', () => this.vm[key] = node.value)
   }
   htmlUpdater(node, value, key) {
-    
+    node.innerHTML = value
+    new Watcher(this.vm, key, newValue => node.innerHTML = newValue)
+  }
+  onUpdater(node, value, key, attrSuffix) {
+    if (attrSuffix[0] === '[' && attrSuffix[attrSuffix.length - 1] === ']') {
+      const dynamicEventName = attrSuffix.slice(1, attrSuffix.length - 1)
+      node.addEventListener(this.vm[dynamicEventName], value)
+      new Watcher(this.vm, dynamicEventName, (newValue, oldValue) => {
+        node.removeEventListener(oldValue, value)
+        node.addEventListener(newValue, value)
+      })
+    } else {
+      node.addEventListener(attrSuffix, value)
+    }
   }
 
   // 编译文本节点, 处理插值表达式
@@ -84,6 +101,9 @@ class Compiler {
 
   isDirective(attrName) {
     return attrName.startsWith('v-')
+  }
+  isAt(attrName) {
+    return attrName.startsWith('@')
   }
   // https://developer.mozilla.org/zh-CN/docs/Web/API/Node/nodeType
   isTextNode(node) {
