@@ -168,7 +168,7 @@ function render() {
 }
 
 function view(data) {
-  return h("div", [
+  return h("div#container", [
     h("h1", "Top 10 movies"),
     h("div", [
       h("a.btn.add", { on: { click: add } }, "Add"),
