@@ -6,7 +6,6 @@ import { eventListenersModule } from "snabbdom/build/package/modules/eventlisten
 import { h } from "snabbdom/build/package/h";
 
 var nextKey = 11;
-var margin = 8;
 var totalHeight = 0;
 
 const patch = init([
@@ -87,6 +86,7 @@ const originalData = [
     elmHeight: 0,
   },
 ];
+const margin = 8;
 
 let sortBy = "rank";
 let data = [
@@ -123,7 +123,17 @@ function remove(data) {
   // TODO
 }
 
+function render() {
+  data.forEach((d, i) =>
+    i === 0
+      ? (d.offset = margin)
+      : (d.offset = data[i - 1].offset + margin + data[i - 1].elmHeight)
+  );
+  rootNode = patch(rootNode, view());
+}
+
 function view() {
+  console.log(data.map((d) => [d.elmHeight, d.offset]));
   return h("div#container", [
     h("h1", "Top 10 movies"),
     h("div.btn-wrapper", [
@@ -137,14 +147,22 @@ function view() {
     ]),
     h(
       "div.list",
-      { style: { height: "1135px" } },
-      data.map((data) =>
-        h("div.row", { style: { opacity: 1 } }, [
-          h("div", { style: { fontWeight: "bold" } }, data.rank),
-          h("div.movie-title", data.title),
-          h("div.movie-description", data.desc),
-          h("div.btn.rm-btn", { on: { click: () => remove(data) } }, "x"),
-        ])
+      data.map((item) =>
+        h(
+          "div.row",
+          {
+            style: { opacity: 1, marginTop: `${item.offset || 0}px` },
+            hook: {
+              insert: (vNode) => (item.elmHeight = vNode.elm.offsetHeight),
+            },
+          },
+          [
+            h("div", { style: { fontWeight: "bold" } }, item.rank),
+            h("div.movie-title", item.title),
+            h("div.movie-description", item.desc),
+            h("div.btn.rm-btn", { on: { click: () => remove(item) } }, "x"),
+          ]
+        )
       )
     ),
   ]);
@@ -153,6 +171,7 @@ function view() {
 function initPage() {
   const container = document.getElementById("container");
   rootNode = patch(container, view());
+  render();
 }
 
 initPage();
