@@ -5,15 +5,17 @@ import { styleModule } from "snabbdom/build/package/modules/style";
 import { eventListenersModule } from "snabbdom/build/package/modules/eventlisteners";
 import { h } from "snabbdom/build/package/h";
 
-var patch = init([classModule, propsModule, styleModule, eventListenersModule]);
-
-var vnode;
-
 var nextKey = 11;
 var margin = 8;
-var sortBy = "rank";
 var totalHeight = 0;
-var originalData = [
+
+const patch = init([
+  classModule,
+  propsModule,
+  styleModule,
+  eventListenersModule,
+]);
+const originalData = [
   {
     rank: 1,
     title: "The Shawshank Redemption",
@@ -85,7 +87,9 @@ var originalData = [
     elmHeight: 0,
   },
 ];
-var data = [
+
+let sortBy = "rank";
+let data = [
   originalData[0],
   originalData[1],
   originalData[2],
@@ -97,3 +101,58 @@ var data = [
   originalData[8],
   originalData[9],
 ];
+
+let rootNode;
+
+/**
+ *
+ * @param {string} type rank | title | desc
+ */
+function sort(type) {
+  console.log("sort: ", type);
+  // TODO
+}
+
+function add() {
+  console.log("add");
+  // TODO
+}
+
+function remove(data) {
+  console.log("remove: ", data);
+  // TODO
+}
+
+function view() {
+  return h("div#container", [
+    h("h1", "Top 10 movies"),
+    h("div.btn-wrapper", [
+      "Sort by:",
+      h("span.btn-group", [
+        h("a.btn.rank", { on: { click: () => sort("rank") } }, "Rank"),
+        h("a.btn.title", { on: { click: () => sort("title") } }, "Title"),
+        h("a.btn.desc", { on: { click: () => sort("desc") } }, "Description"),
+      ]),
+      h("a.btn.add", { on: { click: add } }, "Add"),
+    ]),
+    h(
+      "div.list",
+      { style: { height: "1135px" } },
+      data.map((data) =>
+        h("div.row", { style: { opacity: 1 } }, [
+          h("div", { style: { fontWeight: "bold" } }, data.rank),
+          h("div.movie-title", data.title),
+          h("div.movie-description", data.desc),
+          h("div.btn.rm-btn", { on: { click: () => remove(data) } }, "x"),
+        ])
+      )
+    ),
+  ]);
+}
+
+function initPage() {
+  const container = document.getElementById("container");
+  rootNode = patch(container, view());
+}
+
+initPage();
