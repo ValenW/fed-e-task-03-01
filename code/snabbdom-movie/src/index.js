@@ -110,17 +110,26 @@ let rootNode;
  */
 function sort(type) {
   console.log("sort: ", type);
-  // TODO
+  type === sortBy
+    ? data.reverse()
+    : (data = data = data.sort((a, b) => (a[type] > b[type] ? 1 : -1)));
+  sortBy = type;
+  render();
 }
 
 function add() {
   console.log("add");
-  // TODO
+  const addedItem =
+    originalData[Math.floor(Math.random() * originalData.length)];
+  data.splice(0, 0, { ...addedItem, rank: nextKey++ });
+  render();
 }
 
-function remove(data) {
-  console.log("remove: ", data);
-  // TODO
+function remove(item) {
+  console.log("remove: ", item);
+  const index = data.findIndex((d) => d.rank === item.rank);
+  data.splice(index, 1);
+  render();
 }
 
 function render() {
