@@ -5,9 +5,6 @@ import { styleModule } from "snabbdom/build/package/modules/style";
 import { eventListenersModule } from "snabbdom/build/package/modules/eventlisteners";
 import { h } from "snabbdom/build/package/h";
 
-var nextKey = 11;
-var totalHeight = 0;
-
 const patch = init([
   classModule,
   propsModule,
@@ -88,7 +85,6 @@ const originalData = [
 ];
 const margin = 8;
 
-let sortBy = "rank";
 let data = [
   originalData[0],
   originalData[1],
@@ -102,6 +98,8 @@ let data = [
   originalData[9],
 ];
 
+let sortBy = "rank";
+let nextKey = 11;
 let rootNode;
 
 /**
@@ -148,18 +146,30 @@ function view() {
     h("div.btn-wrapper", [
       "Sort by: ",
       h("span.btn-group", [
-        h("a.btn.rank", {
-          class: { active: sortBy === "rank" },
-          on: { click: () => sort("rank") }
-        }, "Rank"),
-        h("a.btn.title", {
-          class: { active: sortBy === "title" },
-          on: { click: () => sort("title") }
-        }, "Title"),
-        h("a.btn.desc", {
-          class: { active: sortBy === "desc" },
-          on: { click: () => sort("desc") }
-        }, "Description"),
+        h(
+          "a.btn.rank",
+          {
+            class: { active: sortBy === "rank" },
+            on: { click: () => sort("rank") },
+          },
+          "Rank"
+        ),
+        h(
+          "a.btn.title",
+          {
+            class: { active: sortBy === "title" },
+            on: { click: () => sort("title") },
+          },
+          "Title"
+        ),
+        h(
+          "a.btn.desc",
+          {
+            class: { active: sortBy === "desc" },
+            on: { click: () => sort("desc") },
+          },
+          "Description"
+        ),
       ]),
       h("a.btn.add", { on: { click: add } }, "Add"),
     ]),
@@ -169,7 +179,22 @@ function view() {
         h(
           "div.row",
           {
-            style: { opacity: 1, marginTop: `${item.offset || 0}px` },
+            key: item.rank,
+            style: {
+              opacity: 0,
+              transform: "translate(-200px)",
+              // delayed中通常放一般样式, 当其属性变化时, 会自动添加动画
+              // 如初次添加时会从opacity 0 1s内线性变化至 opacity 1
+              delayed: {
+                transform: `translateY(${item.offset}px)`,
+                opacity: 1,
+              },
+              // 使用和delayed类似, 在从dom tree移除时触发
+              remove: {
+                opacity: 0,
+                transform: `translateY(${item.offset}px) translateX(200px)`,
+              },
+            },
             hook: {
               insert: (vNode) => (item.elmHeight = vNode.elm.offsetHeight),
             },
