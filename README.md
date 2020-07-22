@@ -52,4 +52,19 @@ diff算法在snabbdom中就是`patch`方法, 目的是比较新旧两个节点�
 
 ### 第一题
 
+实现模拟了vue-router的hash模式, `yarn serve`
+
+[hash-router](code/hash-router)
+
 ### 第二题
+
+实现模拟`v-html`和`v-on`指令, 并且`v-on`指令支持`@`简写和动态参数(`@[eventName]`), 直接打开`index.html`即可
+
+[mini-vue](code/mini-vue)
+
+### 第三题
+
+通过snabbdom实现了movie列表, css和数据是照搬snabbdom官方示例的, `yarn dev`
+
+[snabbdom-movie](code/snabbdom-movie)
+
