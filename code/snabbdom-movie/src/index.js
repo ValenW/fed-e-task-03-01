@@ -146,11 +146,20 @@ function view() {
   return h("div#container", [
     h("h1", "Top 10 movies"),
     h("div.btn-wrapper", [
-      "Sort by:",
+      "Sort by: ",
       h("span.btn-group", [
-        h("a.btn.rank", { on: { click: () => sort("rank") } }, "Rank"),
-        h("a.btn.title", { on: { click: () => sort("title") } }, "Title"),
-        h("a.btn.desc", { on: { click: () => sort("desc") } }, "Description"),
+        h("a.btn.rank", {
+          class: { active: sortBy === "rank" },
+          on: { click: () => sort("rank") }
+        }, "Rank"),
+        h("a.btn.title", {
+          class: { active: sortBy === "title" },
+          on: { click: () => sort("title") }
+        }, "Title"),
+        h("a.btn.desc", {
+          class: { active: sortBy === "desc" },
+          on: { click: () => sort("desc") }
+        }, "Description"),
       ]),
       h("a.btn.add", { on: { click: add } }, "Add"),
     ]),
